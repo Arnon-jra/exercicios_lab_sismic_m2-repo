@@ -1,0 +1,7 @@
+.theia
+*.txt
+/m2ex??/*
+
+!/m2ex??/*.c
+!.gitignore
+

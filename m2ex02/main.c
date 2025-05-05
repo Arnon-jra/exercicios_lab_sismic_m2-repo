@@ -1,12 +1,10 @@
-/*Exercício 1: Configuração dos pinos
-Escreva um programa que faça o LED verde imitar o estado da chave S1. Se S1 estiver
-pressionado o LED deverá estar aceso, se estiver solto, o LED deve apagar.*/
+/*Exercício 2: Escreva na função main() uma rotina que alterne o estado do LED vermelho toda vez que o
+usuário apertar o botão S1. Não remova os rebotes.*/
 
 #include <msp430.h>
 
 int main(void)
 {
-  volatile unsigned int i;
 
   WDTCTL = WDTPW+WDTHOLD;                   // Stop WDT
   
@@ -24,10 +22,11 @@ int main(void)
 
   while(1)                                  // continuous loop
   {
-    if (P1IN & BIT1) {
-      P1OUT &= ~BIT0;
-    }else if (!(P1IN & BIT1)) {
-      P1OUT |= BIT0;
+    while (P1IN & BIT1) { 
+    }
+    P1OUT ^= BIT0;
+    while (!(P1IN & BIT1)){
     }
   }
+  
 }

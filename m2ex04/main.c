@@ -28,10 +28,10 @@ int main(void)
     }else if (~(estado_atual_p1 & estado_atual_p2)&BIT1 & estado_anterior) { 
       estado_anterior = 0x00;  
       P1OUT ^= BIT0; 
-      debounce(50000);
+      debounce(20000);
     }else if ((estado_atual_p1 & estado_atual_p2) & ((~estado_anterior)&BIT1)) {
       estado_anterior = 0x02;
-      debounce(50000);
+      debounce(20000);
     }else if (~(estado_atual_p1 & estado_atual_p2)&BIT1 & ((~estado_anterior)&BIT1)) {
       estado_anterior = 0x00;
     }

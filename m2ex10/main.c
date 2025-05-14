@@ -15,7 +15,7 @@ void main(void)
     TA0CTL = MC__UP | TASSEL__ACLK;
     TA0CCTL1 = OUTMOD_2;
     TA0CCR0 = 255;
-    TA0CCR1 = 248;
+    TA0CCR1 = 191;
 
     P1DIR |= BIT2;
     P1SEL |= BIT2;

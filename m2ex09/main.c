@@ -15,7 +15,7 @@ void main(void)
     TA0CTL  = MC__UP | TASSEL__ACLK | TACLR;
     TA0CCR0 = 255;
     TA0CCTL2 = OUTMOD_2;
-    TA0CCR2 = 128;
+    TA0CCR2 = 127;
     
     while (1) 
     {

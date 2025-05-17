@@ -5,30 +5,55 @@ os botões S1 e S2. O botão S2 aumenta e o botão S1 diminui o duty cycle em pa
 */
 
 
-#include <msp430f5529.h>
+#include <msp430.h>
 
+void debounce(volatile unsigned int i);
 
-void main(void)
+int main(void)
 {
-    WDTCTL = WDTPW | WDTHOLD;
-    //set timer A0
-    TA0CTL = MC__UP | TASSEL__ACLK;
-    TA0CCTL1 = OUTMOD_2;
+    WDTCTL = WDTPW+WDTHOLD;                   // Stop WDT
+    //set TA0
+    TA0CTL = TASSEL__ACLK | MC__UP |TACLR;
+    TA0CCTL1 = OUTMOD_7;
     TA0CCR0 = 255;
-    TA0CCR1 = 191;
-
+    TA0CCR1 = 0;
+    //set PIN1.2
     P1DIR |= BIT2;
     P1SEL |= BIT2;
-    
-    while (1) 
+    //set S2 P1.1
+    P1REN |= BIT1;
+    P1OUT |= BIT1;
+    //set S1 P4.7
+    P2REN |= BIT1;
+    P2OUT |= BIT1;
+
+  while(1)                                  // continuous loop
+  { 
+    //para chave 1
+    if ((P1IN & BIT1) & (P2IN & BIT1)) 
     {
-        if (P1IN & BIT2) 
-        {
-            //LED LIGADO
-            TA0CCTL1 &= ~CCIFG;   
-        }else if (!(P1IN & BIT2)) {
-            //LED DESLIGADO
-            TA0CCTL0 &= ~BIT0;
-        }
+      debounce(10000);  //nao faca nada
     }
+    else if (!(P1IN & BIT1)) 
+    {
+      TA0CCR1 = TA0CCR1 + 32;
+      debounce(10000);
+      while (!(P1IN & BIT1));
+      debounce(10000);
+    }
+    else if (!(P2IN&BIT1)) 
+    {
+        TA0CCR1 = TA0CCR1 - 32;
+        debounce(10000);
+        while (!(P2IN&BIT1));
+        debounce(10000);
+    }
+  }
 }
+
+void debounce(volatile unsigned int i){
+  while (i--);
+}
+
+
+

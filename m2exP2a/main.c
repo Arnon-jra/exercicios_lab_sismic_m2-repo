@@ -3,7 +3,7 @@
 #include <msp430.h>
 
 void debounce(volatile unsigned int i);
-volatile unsigned int  BT_1, BT_2;
+volatile unsigned int  BT_1, BT_2, dir_m = 1, BT_2_edge;
 
 int main(void)
 {
@@ -24,8 +24,9 @@ int main(void)
     P2OUT |= BIT1;
 
     //set TA01
-    TA1CTL = TASSEL__SMCLK | MC__CONTINUOUS | ID__2 | TACLR | TAIE;
-
+    TA1CTL = TASSEL__SMCLK | MC__UP | ID__2 | TACLR;
+    TA1CCTL0 = CCIE;
+    TA1CCR0 = 6553;
     __enable_interrupt();
 
   while(1)                                  // continuous loop
@@ -47,12 +48,12 @@ int main(void)
     }
     else if (!(P2IN&BIT1)) 
     {
-        
         debounce(10000);
         BT_2 = 1;
         while (!(P2IN&BIT1));
         debounce(10000);
         BT_2 = 0;
+        BT_2_edge = 1; 
     }
   }
 }
@@ -61,14 +62,28 @@ void debounce(volatile unsigned int i){
   while (i--);
 }
 
-#pragma vector = 48
-__interrupt void ta1_isr(void){
-  switch (TA1IV) {
-    case 0x00: break;
-    case 0x0E: 
-      if (BT_1) {
-        TA0CCR1 += 116;
-      }
+#pragma vector = 49
+__interrupt void ta1_isr_ccr0(void){
+
+/*  if (TA0CCR1 >= 2619){
+    dir = 0; // set direction ( 0 vel negativo)
+  }else if (TA0CCR1 <= 523) {
+    dir = 1; // set direction
+  }*/
+  
+  if (BT_1 & dir_m & (TA0CCR1 < 2620)) {
+    TA0CCR1 += 11;
+  }else if (BT_1 & !dir_m & (TA0CCR1 > 524)) {
+    TA0CCR1 -= 33;
   }
+
+  if (BT_2_edge) {
+    if (dir_m) 
+    dir_m = 0;
+    else if (!dir_m)
+    dir_m = 1;
+    BT_2_edge = 0;
+  }
+
 }
 

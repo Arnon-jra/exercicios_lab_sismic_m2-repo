@@ -69,7 +69,7 @@ int main(void)
     }else if (!BT_1 & !BT_2) {
       fase = 1;
     }else if (BT_1) {
-      fase = 0;
+      fase = 1;
       BT_1 = 0;
     }
   }else if (fase == 2) {

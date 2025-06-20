@@ -9,7 +9,7 @@ i2c_config();
 
   while (1) {
 
-    i2c_send(0x27, 0x08);
+    i2c_send(0x27, 0x00);
     __delay_cycles(500000);
     i2c_send(0x27, 0x08);
     __delay_cycles(500000);
